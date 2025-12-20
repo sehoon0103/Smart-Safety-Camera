@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Camera Stream</title>
+    <style>
+        body { text-align: center; background: #f2f2f2; }
+        h1 { margin-top: 20px; }
+        img { border: 3px solid #333; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Raspberry Pi – Live Camera YOLO Stream</h1>
+    <img src="{{ url_for('video_feed') }}" width="640">
+</body>
+</html>
+<script>
+    // 브라우저 권한 요청
+    document.addEventListener("DOMContentLoaded", () => {
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+    });
+
+    // 2초마다 서버에 알림 체크
+    setInterval(() => {
+        fetch("/notify_status")
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    new Notification("⚠ 알림 발생!", {
+                        body: data.message,
+                        icon: "https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/alert-icon.png"
+                    });
+                }
+            });
+    }, 2000);
+</script>
