@@ -1,0 +1,39 @@
+camera:
+  width: 1280
+  height: 720
+  fps: 30
+gpio:
+  led_pin: 17
+  buzzer_pin: 27
+  buzzer_on_ms: 500
+  buzzer_off_ms: 500
+
+inference:
+  # Hailo-8 HEF가 있으면 이 경로로 지정하세요. 없으면 비워두면 CPU 폴백.
+  hailo_hef_path: ""
+  # 1단계: CPU 폴백으로 먼저 시연. (헬멧 포함 .pt 경로)
+  cpu_model_weight: "/home/eyes/Capstone/Smart-Safety/models/best.pt"
+  cpu_model_weight_extra: "/home/eyes/Capstone/Smart-Safety/models/best2.pt"
+
+  conf_thres: 0.25
+  iou_thres: 0.45
+
+logic:
+  temporal_window: 12
+  min_person_size_px: 10
+  head_ratio: 0.30
+  helmet_head_iou: 0.10
+  helmet_min_conf: 0.35
+  vest_torso_top_ratio: 0.18
+  vest_torso_bottom_ratio: 0.98
+  vest_torso_iou: 0.02
+  vest_draw_top_ratio: 0.25
+  vest_draw_bottom_ratio: 0.75
+
+  vest_min_frames: 2
+
+  alert_threshold: 0.50
+  min_ppe_conf: 0.05
+
+  draw_visual: true
+  show_window: true
