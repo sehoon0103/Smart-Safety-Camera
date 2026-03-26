@@ -67,14 +67,13 @@
 
 ---
 
-## Repository Guide (권장)
+## Repository Guide
 
-- `app/` : 실행/서비스(있다면)
+- `app/` : 실행/서비스
 - `models/` : 모델(.pt 등)
-- `data/` : 입력/샘플(있다면)
-- `logs/` : 로그/CSV(있다면)
+- `data/` : 입력/샘플
+- `logs/` : 로그/CSV
 
-> 위 구조는 레포의 실제 폴더 구성에 맞게 조정하세요.
 
 ---
 
