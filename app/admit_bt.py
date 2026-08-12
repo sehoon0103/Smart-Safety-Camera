@@ -1,5 +1,7 @@
-import bluetooth
 import threading
+
+import bluetooth
+
 
 class AdminNotifier:
     """

@@ -1,5 +1,7 @@
-from picamera2 import Picamera2
 import time
+
+from picamera2 import Picamera2
+
 
 class Camera:
     def __init__(self, cam_cfg):

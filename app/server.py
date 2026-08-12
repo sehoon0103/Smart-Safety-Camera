@@ -1,7 +1,7 @@
-from flask import Flask, request, jsonify, send_file
-import time
 import csv
-import json
+import time
+
+from flask import Flask, jsonify, request, send_file
 
 app = Flask(__name__)
 
@@ -131,8 +131,7 @@ def logs_page():
         with open("safety_log.csv", "r", encoding="utf-8") as f:
             reader = csv.reader(f)
             header = next(reader, [])
-            for r in reader:
-                rows.append(r)
+            rows = list(reader)
     except FileNotFoundError:
         header = ["time", "helmet", "vest", "final"]
 
@@ -189,8 +188,7 @@ def read_csv():
     result = []
     try:
         with open("safety_log.csv", "r", encoding="utf-8") as f:
-            for row in csv.DictReader(f):
-                result.append(row)
+            result = list(csv.DictReader(f))
     except FileNotFoundError:
         pass
     return result

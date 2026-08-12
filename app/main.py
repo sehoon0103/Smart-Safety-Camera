@@ -1,17 +1,16 @@
-import time
-import yaml
-import cv2
-import requests
 import csv
+import time
 from datetime import datetime
 
-from sensors import Camera, GPIOBoard
-from infer_yolo import build_detector
-from temporal_lstm import TemporalSmoother
-from rules import HelmetJudge
-from alerts import Notifier
+import cv2
+import requests
+import yaml
 from admit_bt import AdminNotifier
-
+from alerts import Notifier
+from infer_yolo import build_detector
+from rules import HelmetJudge
+from sensors import Camera, GPIOBoard
+from temporal_lstm import TemporalSmoother
 
 # ---------------------------------------
 #   Flask 서버 주소
@@ -25,7 +24,7 @@ def send_alert(alert_type):
     try:
         r = requests.post(ALERT_URL, json={"type": alert_type}, timeout=1)
         print("[ALERT] Sent:", alert_type, "Status:", r.status_code)
-    except Exception as e:
+    except requests.RequestException as e:
         print("[ALERT] Failed:", e)
 
 
@@ -91,7 +90,7 @@ def write_csv(helmet_on, vest_on, alert_type):
     else:
         final_text = "DANGER"
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S")
 
     with open(filename, "a", newline="") as f:
         writer = csv.writer(f)
@@ -146,7 +145,6 @@ def main():
 
             unsafe_prob, overlay = judge.evaluate(frame, dets, draw=draw)
             smooth.push(unsafe_prob)
-            smooth_val = smooth.decision()
 
             # YOLO 분석
             helmet_on, helmet_off, vest_on, vest_off = analyze_safety(dets, names)

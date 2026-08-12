@@ -1,5 +1,5 @@
 from collections import deque
-import numpy as np
+
 
 class TemporalSmoother:
     def __init__(self, window=12, tflite_path=None):
@@ -24,7 +24,7 @@ class TemporalSmoother:
                 import tflite_runtime.interpreter as tflite
                 self.lstm = tflite.Interpreter(model_path=tflite_path)
                 self.lstm.allocate_tensors()
-            except Exception:
+            except Exception:  # noqa: BLE001 -- fall back to no LSTM model on any load failure
                 self.lstm = None
 
     def push(self, unsafe_prob: float):

@@ -1,17 +1,19 @@
-import os, cv2
-from typing import List, Dict
+import os
+
+import cv2
+
 
 def _hailo_available():
     try:
-        import hailo_rt
+        import hailo_rt  # noqa: F401 -- presence check only, not used directly
         return True
-    except Exception:
+    except Exception:  # noqa: BLE001 -- any failure to load the SDK means "unavailable"
         return False
 
 
 class BaseDetector:
     names = None
-    def infer(self, frame_bgr) -> List[Dict]:
+    def infer(self, frame_bgr) -> list[dict]:
         raise NotImplementedError
 
 
@@ -58,7 +60,7 @@ class CpuYOLODetector(BaseDetector):
         else:
             cv2.imwrite("bad_frame.jpg", frame_bgr)
 
-        dets: List[Dict] = []
+        dets: list[dict] = []
 
         if r.boxes:
             for b in r.boxes:
@@ -79,7 +81,7 @@ def build_detector(cfg):
     if hef and os.path.isfile(hef) and _hailo_available():
         try:
             return HailoDetector(hef, conf, iou)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 -- fall back to CPU on any Hailo init failure
             print(f"[WARN] Hailo 실패 → CPU 폴백: {e}")
 
     return CpuYOLODetector(cfg.get("cpu_model_weight", "yolov8n.pt"), conf, iou)

@@ -1,4 +1,6 @@
 import time
+
+
 class Notifier:
     def __init__(self, board, gpio_cfg):
         self.board = board

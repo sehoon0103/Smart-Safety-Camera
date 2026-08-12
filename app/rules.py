@@ -91,7 +91,7 @@ class HelmetJudge:
     #  메인 평가 함수
     # ------------------------------------------------------------------
     def evaluate(self, frame, dets, draw=False):
-        H, W, _ = frame.shape
+        H, _W, _ = frame.shape
         overlay = frame.copy() if draw else None
 
         helmet_cnt = 0
