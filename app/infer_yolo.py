@@ -54,12 +54,6 @@ class CpuYOLODetector(BaseDetector):
             verbose=False
         )[0]
 
-        # 필요 없으면 아래 good_frame/bad_frame 저장 부분은 지워도 됨
-        if r.boxes and len(r.boxes) > 0:
-            cv2.imwrite("good_frame.jpg", frame_bgr)
-        else:
-            cv2.imwrite("bad_frame.jpg", frame_bgr)
-
         dets: list[dict] = []
 
         if r.boxes:

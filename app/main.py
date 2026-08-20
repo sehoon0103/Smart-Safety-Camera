@@ -28,38 +28,6 @@ def send_alert(alert_type):
         print("[ALERT] Failed:", e)
 
 
-def get_class_name(names, cls_id):
-    """YOLO 클래스 이름 얻기"""
-    if isinstance(names, dict):
-        return names.get(cls_id, "")
-    return names[cls_id]
-
-
-# ---------------------------------------
-#   YOLO 기반 안전 판단
-# ---------------------------------------
-def analyze_safety(dets, names):
-
-    helmet_on = False
-    helmet_off = False
-    vest_on = False
-
-    for d in dets:
-        name = get_class_name(names, d["cls"])
-
-        if name == "head_helmet":
-            helmet_on = True
-
-        if name == "head_nohelmet":
-            helmet_off = True
-
-        if name == "vest":
-            vest_on = True
-
-    vest_off = not vest_on
-    return helmet_on, helmet_off, vest_on, vest_off
-
-
 # ---------------------------------------
 #   CSV 파일 초기 생성
 # ---------------------------------------
@@ -143,22 +111,22 @@ def main():
 
             dets = det.infer(frame)
 
-            unsafe_prob, overlay = judge.evaluate(frame, dets, draw=draw)
+            unsafe_prob, helmet_safe, vest_safe, overlay = judge.evaluate(frame, dets, draw=draw)
             smooth.push(unsafe_prob)
+            is_unsafe = smooth.decision() >= 0.5
 
-            # YOLO 분석
-            helmet_on, helmet_off, vest_on, vest_off = analyze_safety(dets, names)
-
-            print(f"[STATE] helmet_on={helmet_on}, helmet_off={helmet_off}, vest_on={vest_on}, vest_off={vest_off}")
+            print(f"[STATE] helmet_safe={helmet_safe}, vest_safe={vest_safe}, is_unsafe={is_unsafe}")
 
             # ---------------------------------------
-            #   App Inventor와 동일 alert 규칙
+            #   판정 규칙: HelmetJudge의 사람별 IoU 매칭 결과를
+            #   TemporalSmoother로 연속 프레임 디바운스한 뒤 최종 결정
+            #   (한 프레임의 오검출만으로 알림이 튀지 않게 함)
             # ---------------------------------------
-            if helmet_on and vest_on:
+            if not is_unsafe:
                 alert = "ok"
-            elif helmet_off and vest_off:
+            elif not helmet_safe and not vest_safe:
                 alert = "no_both"
-            elif helmet_off:
+            elif not helmet_safe:
                 alert = "no_helmet"
             else:
                 alert = "no_vest"
@@ -174,12 +142,12 @@ def main():
             admin_notifier.send_state(alert != "ok")
 
             # CSV 저장
-            write_csv(helmet_on, vest_on, alert)
+            write_csv(helmet_safe, vest_safe, alert)
 
             # 디버그 HUD 표시
             if draw:
                 hud = overlay if overlay is not None else frame
-                cv2.putText(hud, f"Alert:{alert} Helmet:{helmet_on} Vest:{vest_on}",
+                cv2.putText(hud, f"Alert:{alert} Helmet:{helmet_safe} Vest:{vest_safe}",
                             (8, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
                             (0, 255, 0) if alert == "ok" else (0, 165, 255), 2)
 

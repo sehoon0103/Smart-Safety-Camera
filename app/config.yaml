@@ -11,8 +11,8 @@ gpio:
 inference:
   # Hailo-8 HEF가 있으면 이 경로로 지정하세요. 없으면 비워두면 CPU 폴백.
   hailo_hef_path: ""
-  # 1단계: CPU 폴백으로 먼저 시연. (헬멧 포함 .pt 경로)
-  cpu_model_weight: "/home/eyes/Capstone/Smart-Safety/models/best.pt"
+  # 1단계: CPU 폴백으로 먼저 시연. (app/ 기준 상대경로, 저장소에 실제로 들어있는 모델)
+  cpu_model_weight: "../models/yolov8n.pt"
   cpu_model_weight_extra: "/home/eyes/Capstone/Smart-Safety/models/best2.pt"
 
   conf_thres: 0.25

@@ -322,4 +322,4 @@ class HelmetJudge:
             f"vest_safe={vest_safe}, unsafe_prob={unsafe_prob:.2f}"
         )
 
-        return unsafe_prob, overlay
+        return unsafe_prob, helmet_safe, vest_safe, overlay
